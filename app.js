@@ -12,9 +12,9 @@ const orderRoutes = require("./routes/orderRoutes");
 
 const app = express();
 
-
-
-
+// =============================================
+// Health Check
+// =============================================
 app.get("/", (req, res) => {
   res.json({
     success: true,
@@ -23,37 +23,92 @@ app.get("/", (req, res) => {
   });
 });
 
-
+// =============================================
+// Security
+// =============================================
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
+);
 
 // =============================================
-// Security & Utility Middleware
+// Allowed Origins
 // =============================================
-app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:8080",
+  "https://evebeautycare.live",
+  "https://www.evebeautycare.live",
+];
+
+// Add origins from environment variable
+if (process.env.FRONTEND_URL) {
+  process.env.FRONTEND_URL.split(",")
+    .map((url) => url.trim())
+    .forEach((url) => {
+      if (!allowedOrigins.includes(url)) {
+        allowedOrigins.push(url);
+      }
+    });
+}
+
+// =============================================
+// CORS Configuration
+// =============================================
 app.use(
   cors({
-    // In development, allow any localhost origin (port may vary)
-    origin: function (origin, callback) {
-      if (!origin || origin.match(/^https?:\/\/localhost(:\d+)?$/)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+    origin(origin, callback) {
+      // Allow requests without Origin
+      // (Postman, Render health checks, curl, etc.)
+      if (!origin) {
+        return callback(null, true);
       }
+
+      // Allow localhost
+      if (/^https?:\/\/localhost(:\d+)?$/.test(origin)) {
+        return callback(null, true);
+      }
+
+      // Allow all Vercel preview deployments
+      if (origin.endsWith(".vercel.app")) {
+        return callback(null, true);
+      }
+
+      // Allow custom domains
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.error("Blocked by CORS:", origin);
+
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   })
 );
+
+// =============================================
+// Middleware
+// =============================================
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // =============================================
-// API Routes
+// API Health Route
 // =============================================
 app.get("/api/health", (req, res) => {
-  res.json({ success: true, message: "Eve Beauticare API is running 🌹" });
+  res.json({
+    success: true,
+    message: "Eve Beauticare API is running 🌹",
+  });
 });
 
+// =============================================
+// Routes
+// =============================================
 app.use("/api/admin", adminRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
