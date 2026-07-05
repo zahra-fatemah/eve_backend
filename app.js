@@ -18,7 +18,7 @@ const app = express();
 app.get("/", (req, res) => {
   res.json({
     success: true,
-    message: "🌹 Eve Beauticare Backend is Running",
+    message: "🌹 Eve Beauty Care Backend is Running",
     environment: process.env.NODE_ENV,
   });
 });
@@ -102,7 +102,7 @@ app.use(cookieParser());
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
-    message: "Eve Beauticare API is running 🌹",
+    message: "Eve Beauty Care API is running 🌹",
   });
 });
 

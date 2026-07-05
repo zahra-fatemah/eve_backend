@@ -1,7 +1,7 @@
 {
   "name": "eve-beauticare-backend",
   "version": "1.0.0",
-  "description": "Backend API for Eve Beauticare — luxury beauty products",
+  "description": "Backend API for Eve Beauty Care — luxury beauty products",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

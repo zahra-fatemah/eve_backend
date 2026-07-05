@@ -17,7 +17,7 @@ const startServer = async () => {
   await connectDB();
 
   app.listen(PORT, () => {
-    console.log(`🌹 Eve Beauticare API running on port ${PORT}`);
+    console.log(`🌹 Eve Beauty Care API running on port ${PORT}`);
     console.log(`   Environment: ${process.env.NODE_ENV || "development"}`);
   });
 };
