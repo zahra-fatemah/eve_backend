@@ -12,6 +12,19 @@ const orderRoutes = require("./routes/orderRoutes");
 
 const app = express();
 
+
+
+
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "🌹 Eve Beauticare Backend is Running",
+    environment: process.env.NODE_ENV,
+  });
+});
+
+
+
 // =============================================
 // Security & Utility Middleware
 // =============================================
